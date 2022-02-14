@@ -56,7 +56,7 @@ hayden_face_encoding = np.loadtxt("Hayden_Encoding.txt", dtype = float)
 
 known_face_encodings = [
     bret_face_encoding,
-    #michael_face_encoding,
+    michael_face_encoding,
     hayden_face_encoding,
 ]
 known_face_names = [
