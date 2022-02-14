@@ -49,7 +49,7 @@ video_capture = cv2.VideoCapture(0)
 # Photo database
 bret_face_encoding = np.loadtxt("Bret_Encoding.txt", dtype = float)
 
-#michael_face_encoding = np.loadtxt("Michael_Encoding.txt", dtype = float)
+michael_face_encoding = np.loadtxt("Michael_Encoding.txt", dtype = float)
 
 hayden_face_encoding = np.loadtxt("Hayden_Encoding.txt", dtype = float)
 
@@ -61,7 +61,7 @@ known_face_encodings = [
 ]
 known_face_names = [
     "Bret",
-    #"Michael",
+    "Michael",
     "Hayden",
 ]
 
