@@ -16,7 +16,7 @@ pwm.set_PWM_frequency( servoPIN, 50 )
 
 RED = 5
 GREEN = 3
-
+bean = 7
 
 # Initial LED conditions
 GPIO.setmode(GPIO.BOARD)
