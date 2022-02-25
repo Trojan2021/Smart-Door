@@ -1,10 +1,14 @@
+import argparse
 import time
 
 import cv2
 import face_recognition
 import numpy as np
 
-
+#Parsinig Arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-d", "--detection-method", type=str, default="hog")
+args = vars(ap.parse_args())
 
 # Video capture
 video_capture = cv2.VideoCapture(0)
