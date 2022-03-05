@@ -6,7 +6,7 @@ import numpy as np
 import pigpio
 import RPi.GPIO as GPIO
 from bluedot import BlueDot
-
+#beans
 # Servo setup
 GPIO.setwarnings(False)
 servoPIN = 18
