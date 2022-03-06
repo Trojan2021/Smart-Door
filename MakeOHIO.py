@@ -45,7 +45,6 @@ def HandleClosed():
 
 # Motor Setup
 
-
 RELAYONE = 17
 RELAYTWO = 27
 
@@ -57,16 +56,14 @@ GPIO.output(RELAYTWO, GPIO.HIGH)
 
 def MotorOpen():
     GPIO.output(RELAYTWO, GPIO.LOW)
-    time.sleep(2) #was 2
-    GPIO.output(RELAYTWO, GPIO.HIGH)
-    time.sleep(1)
 
 
 def MotorClose():
     GPIO.output(RELAYONE, GPIO.LOW)
-    time.sleep(4) #was 4
+    
+def MotorStop():
+    GPIO.output(RELAYTWO, GPIO.HIGH)
     GPIO.output(RELAYONE, GPIO.HIGH)
-    time.sleep(1)
 
 # LED Setup
 
@@ -93,6 +90,7 @@ def RedOn():
     GPIO.output(GREEN, False)
     
 cool = False
+timestart = 0
 
 # Bluetooth Setup
 
@@ -131,8 +129,8 @@ while True:
         # Bluetooth
         if (bd.is_pressed == True):
             if cool == False:
-                        timestart = time.time()
-                        cool = True
+                timestart = time.time()
+                cool = True
 
         # Analyzing frame
         ret, frame = video_capture.read()
@@ -199,10 +197,12 @@ while True:
         # Display
         cv2.imshow('Video', frame)
         
+        
         if cool == True:
             GreenOn()
             timenow = time.time()
-            dtime = timestart - timenow
+            dtime = timenow - timestart
+            print(dtime)
             if dtime < 2:
                 DeadOpen()
                 HandleOpen()
@@ -210,10 +210,12 @@ while True:
                 MotorOpen()
             if dtime > 7 and dtime < 9:
                 HandleClosed()
+                MotorStop()
             if dtime > 9 and dtime < 11:
                 MotorClose()
             if dtime > 11:
                 DeadClosed()
+                MotorStop()
                 RedOn()
                 cool = False
 
