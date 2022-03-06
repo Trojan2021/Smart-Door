@@ -11,6 +11,8 @@ Face Recgontion For Python + Dependencies - https://github.com/ageitgey/face_rec
 BlueDot - https://github.com/martinohanlon/BlueDot
 
 ### Info:
+This project was started at Hack OHIO 2021 and contunied at Make OHIO 2022
+
 If you need to contact me about this project feel free to leave a message in the discussion channel
 
 Feel free to join the discord channel for more casual talk on the project or to get in contact with a developer https://discord.gg/AnNgcTGA5N
