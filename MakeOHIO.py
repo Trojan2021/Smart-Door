@@ -91,6 +91,8 @@ def RedOn():
     GPIO.output(RED, True)
     GPIO.setup(GREEN, GPIO.OUT)
     GPIO.output(GREEN, False)
+    
+cool = False
 
 # Bluetooth Setup
 
