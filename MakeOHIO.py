@@ -1,3 +1,5 @@
+#Main File To Run Door
+
 import time
 
 import cv2
@@ -19,7 +21,7 @@ pwm.set_PWM_frequency(Deadbolt, 50)
 pwm.set_PWM_frequency(Handle, 50)
 
 # Deadbolt Servo Setup
-DOpen = 1750 
+DOpen = 1750
 DClosed = 2500
 
 def DeadOpen():
@@ -53,7 +55,7 @@ def MotorOpen():
 
 def MotorClose():
     GPIO.output(RELAYONE, GPIO.LOW)
-    
+
 def MotorStop():
     GPIO.output(RELAYTWO, GPIO.HIGH)
     GPIO.output(RELAYONE, GPIO.HIGH)
@@ -80,7 +82,7 @@ def RedOn():
     GPIO.output(RED, False)
     GPIO.setup(GREEN, GPIO.OUT)
     GPIO.output(GREEN, True)
-    
+
 cool = False
 timestart = 0
 
@@ -132,7 +134,7 @@ while True:
 
         # Converting RGB to BRG
         rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-        
+
         if process_this_frame:
 
             # Finds a face
@@ -157,7 +159,7 @@ while True:
 
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
-                    
+
                     # LED settings
                     if cool == False:
                         timestart = time.time()
@@ -186,8 +188,8 @@ while True:
 
         # Display
         cv2.imshow('Video', frame)
-        
-        
+
+
         if cool == True:
             GreenOn()
             timenow = time.time()
