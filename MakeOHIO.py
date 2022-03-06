@@ -7,10 +7,6 @@ import pigpio
 import RPi.GPIO as GPIO
 from bluedot import BlueDot
 
-# Variables for identifying if the door is locked or unlocked
-db = False
-hd = False
-
 # Servo Setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -99,41 +95,7 @@ def RedOn():
 # Bluetooth Setup
 
 
-bd = BlueDot(cols=3, rows=1)
-bd[2, 0].color = "red"  # RED SHOULD BE FOR HANDLE
-HANDLE = 2, 0
-bd[0, 0].color = "blue"  # BLUE SHOULD BE FOR DEADBOLT
-DEADBOLT = 0, 0
-bd[1, 0].visible = False  # "REMOVES" MIDDLE BUTTON TO MAKE DISPLAY LOOK NICE
-
-
-'''# Main Method (minus all the prepping, setups, and functions being created)
-while True:
-
-    if bean == 'Blue':
-        while True:
-            Bluetooth()
-            control()
-
-    if bean == 'Face':
-        FacialPrep()
-        while True:
-            FacialRecognition()
-            control()
-
-    if bean == 'Both':
-        FacialPrep()
-        time.sleep(5)
-        while True:
-            Bluetooth()
-            FacialRecognition()
-            control()
-
-    # Hit 'q' on the keyboard to quit and close the video display
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        video_capture.release()
-        cv2.destroyAllWindows()
-        '''
+bd = BlueDot()
 
 # Video capture
 video_capture = cv2.VideoCapture(0)
@@ -143,20 +105,16 @@ video_capture = cv2.VideoCapture(0)
 
 sawyer_face_encoding = np.loadtxt("Sawyer_Encoding.txt", dtype=float)
 
-#michael_face_encoding = np.loadtxt("Michael_Encoding.txt", dtype = float)
-
 #hayden_face_encoding = np.loadtxt("Hayden_Encoding.txt", dtype = float)
 
 known_face_encodings = [
     sawyer_face_encoding,
     # bret_face_encoding,
-    # michael_face_encoding,
     # hayden_face_encoding,
 ]
 known_face_names = [
     # "Bret",
     "Sawyer",
-    # "Michael",
     # "Hayden",
 ]
 
@@ -170,17 +128,9 @@ while True:
 
         # Bluetooth
         if (bd.is_pressed == True):
-            #pwm.set_servo_pulsewidth(servoPIN, 1150)
-            GreenOn()
-            DeadOpen()
-            HandleOpen()
-            time.sleep(2)
-            MotorOpen()
-            time.sleep(5)
-            MotorClose()
-            time.sleep(3)
-            HandleClosed()
-            DeadClosed()
+            if cool == False:
+                        timestart = time.time()
+                        cool = True
 
         # Analyzing frame
         ret, frame = video_capture.read()
@@ -190,20 +140,13 @@ while True:
             frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC)
 
         # Converting RGB to BRG
-        #rgb_small_frame = small_frame[:, :, ::-1]
         rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-
-        #HandleClosed()
-        #DeadClosed()
         
         if process_this_frame:
 
             # Finds a face
             face_locations = face_recognition.face_locations(rgb_small_frame)
             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-            #pwm.set_servo_pulsewidth(servoPIN, 850)
-            #HandleClosed()
-            #DeadClosed()
 
             # LED settings
             RedOn()
@@ -224,26 +167,11 @@ while True:
 
                 if matches[best_match_index]:
                     name = known_face_names[best_match_index]
-
-                    # Servo makes door open
-                    #pwm.set_servo_pulsewidth(servoPIN, 1150)
                     
                     # LED settings
-                    GreenOn()
-                    
-                    DeadOpen()
-                    HandleOpen()
-                    time.sleep(2)
-                    MotorOpen()
-                    time.sleep(5)
-                    HandleClosed()
-                    time.sleep(2)
-                    MotorClose()
-                    time.sleep(2)
-                    DeadClosed()
-
-                    # Slight delay before servo closes
-                    # time.sleep(1)
+                    if cool == False:
+                        timestart = time.time()
+                        cool = True
 
                 face_names.append(name)
 
@@ -268,6 +196,24 @@ while True:
 
         # Display
         cv2.imshow('Video', frame)
+        
+        if cool == True:
+            GreenOn()
+            timenow = time.time()
+            dtime = timestart - timenow
+            if dtime < 2:
+                DeadOpen()
+                HandleOpen()
+            if dtime > 2 and dtime < 7:
+                MotorOpen()
+            if dtime > 7 and dtime < 9:
+                HandleClosed()
+            if dtime > 9 and dtime < 11:
+                MotorClose()
+            if dtime > 11:
+                DeadClosed()
+                RedOn()
+                cool = False
 
         # Hit 'q' on the keyboard to quit
         if cv2.waitKey(1) & 0xFF == ord('q'):
