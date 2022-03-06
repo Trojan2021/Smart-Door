@@ -196,14 +196,14 @@ while True:
             if dtime < 2:
                 DeadOpen()
                 HandleOpen()
-            if dtime > 2 and dtime < 5:
+            if dtime > 2 and dtime < 4.25:
                 MotorOpen()
-            if dtime > 5 and dtime < 7:
+            if dtime > 4.25 and dtime < 6.25:
                 HandleClosed()
                 MotorStop()
-            if dtime > 7 and dtime < 11:
+            if dtime > 6.25 and dtime < 10.25:
                 MotorClose()
-            if dtime > 11:
+            if dtime > 10.25:
                 DeadClosed()
                 MotorStop()
                 RedOn()
