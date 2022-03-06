@@ -7,7 +7,7 @@ import pigpio
 import RPi.GPIO as GPIO
 from bluedot import BlueDot
 
-# Servo Setup
+# Servos Setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 Deadbolt = 19
@@ -19,26 +19,21 @@ pwm.set_PWM_frequency(Deadbolt, 50)
 pwm.set_PWM_frequency(Handle, 50)
 
 # Deadbolt Servo Setup
-DOpen = 1900
+DOpen = 1750 
 DClosed = 2500
-
 
 def DeadOpen():
     pwm.set_servo_pulsewidth(Deadbolt, DOpen)
 
-
 def DeadClosed():
     pwm.set_servo_pulsewidth(Deadbolt, DClosed)
-
 
 # Handle Servo Setup
 HOpen = 800
 HClosed = 1500
 
-
 def HandleOpen():
     pwm.set_servo_pulsewidth(Handle, HOpen)
-
 
 def HandleClosed():
     pwm.set_servo_pulsewidth(Handle, HClosed)
@@ -53,10 +48,8 @@ GPIO.setup(RELAYTWO, GPIO.OUT)
 GPIO.output(RELAYONE, GPIO.HIGH)
 GPIO.output(RELAYTWO, GPIO.HIGH)
 
-
 def MotorOpen():
     GPIO.output(RELAYTWO, GPIO.LOW)
-
 
 def MotorClose():
     GPIO.output(RELAYONE, GPIO.LOW)
@@ -67,9 +60,8 @@ def MotorStop():
 
 # LED Setup
 
-
 RED = 5
-GREEN = 3
+GREEN = 6
 GPIO.setup(RED, GPIO.OUT)
 GPIO.output(RED, True)
 GPIO.setup(GREEN, GPIO.OUT)
@@ -78,23 +70,22 @@ GPIO.output(GREEN, False)
 
 def GreenOn():
     GPIO.setup(RED, GPIO.OUT)
-    GPIO.output(RED, False)
+    GPIO.output(RED, True)
     GPIO.setup(GREEN, GPIO.OUT)
-    GPIO.output(GREEN, True)
+    GPIO.output(GREEN, False)
 
 
 def RedOn():
     GPIO.setup(RED, GPIO.OUT)
-    GPIO.output(RED, True)
+    GPIO.output(RED, False)
     GPIO.setup(GREEN, GPIO.OUT)
-    GPIO.output(GREEN, False)
+    GPIO.output(GREEN, True)
     
 cool = False
 timestart = 0
 
+
 # Bluetooth Setup
-
-
 bd = BlueDot()
 
 # Video capture
@@ -149,7 +140,6 @@ while True:
             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
             # LED settings
-            RedOn()
 
             face_names = []
 
@@ -206,18 +196,22 @@ while True:
             if dtime < 2:
                 DeadOpen()
                 HandleOpen()
-            if dtime > 2 and dtime < 7:
+            if dtime > 2 and dtime < 5:
                 MotorOpen()
-            if dtime > 7 and dtime < 9:
+            if dtime > 5 and dtime < 7:
                 HandleClosed()
                 MotorStop()
-            if dtime > 9 and dtime < 11:
+            if dtime > 7 and dtime < 11:
                 MotorClose()
             if dtime > 11:
                 DeadClosed()
                 MotorStop()
                 RedOn()
                 cool = False
+        else:
+            HandleClosed()
+            DeadClosed()
+            RedOn()
 
         # Hit 'q' on the keyboard to quit
         if cv2.waitKey(1) & 0xFF == ord('q'):
