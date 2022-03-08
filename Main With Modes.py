@@ -210,6 +210,7 @@ def FRecognition():
     cv2.imshow('Video', frame)
 
 def BlueTooth():
+    bd = BlueDot()
     # Bluetooth
     if (bd.is_pressed == True):
         if cool == False:
@@ -284,7 +285,68 @@ if bean == 'FR':
     process_this_frame = True
     time.sleep(1)
     while True:
-            
+        # Analyzing frame
+        ret, frame = video_capture.read()
+
+        # Scaling for performance
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC)
+
+        # Converting RGB to BRG
+        rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+
+        if process_this_frame:
+
+            # Finds a face
+            face_locations = face_recognition.face_locations(rgb_small_frame)
+            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+            # LED settings
+
+            face_names = []
+
+            for face_encoding in face_encodings:
+
+                # Matches a face
+                matches = face_recognition.compare_faces(
+                    known_face_encodings, face_encoding)
+                name = "Unknown"
+
+                # Or instead, use the known face with the smallest distance to the new face
+                face_distances = face_recognition.face_distance(
+                    known_face_encodings, face_encoding)
+                best_match_index = np.argmin(face_distances)
+
+                if matches[best_match_index]:
+                    name = known_face_names[best_match_index]
+
+                    # Telling Door To Toggle
+                    if cool == False:
+                        timestart = time.time()
+                        cool = True
+
+                face_names.append(name)
+
+        process_this_frame = not process_this_frame
+
+        for (top, right, bottom, left), name in zip(face_locations, face_names):
+            top *= 4
+            right *= 4
+            bottom *= 4
+            left *= 4
+
+            # box
+            cv2.rectangle(frame, (left, top),
+                          (right, bottom), (255, 0, 255), 2)
+
+            # Dname
+            cv2.rectangle(frame, (left, bottom - 35),
+                          (right, bottom), (255, 0, 255), cv2.FILLED)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(frame, name, (left + 6, bottom - 6),
+                        font, 1.0, (255, 255, 255), 1)
+
+        # Display
+        cv2.imshow('Video', frame)
         Control()
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
