@@ -22,12 +22,9 @@ GREEN = 6
 cool = False
 timestart = 0
 pwm = pigpio.pi()
-bd = BlueDot()
-video_capture = 0
 sawyer_face_encoding = 0
 known_face_encodings= [0, 0, 0]
 known_face_names = [0, 0, 0]
-ret, frame = 0
 small_frame = 0
 rgb_small_frame = 0
 face_locations = [0, 0, 0]
@@ -36,9 +33,10 @@ face_names = [0, 0, 0]
 matches = [0, 0, 0]
 name = 0
 face_distances = 0
-process_this_frame = 0
+process_this_frame = True
 timenow = 0
 dtime = 0
+video_capture = cv2.VideoCapture(-1)
 
 
 # Servos Setup
@@ -152,8 +150,7 @@ def FRecognition():
     ret, frame = video_capture.read()
 
     # Scaling for performance
-    small_frame = cv2.resize(
-        frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC)
+    small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC)
 
     # Converting RGB to BRG
     rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
@@ -259,12 +256,40 @@ if bean == 'BT':
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 if bean == 'FR':
+    # Video capture
+    video_capture = cv2.VideoCapture(0)
+
+    # Photo database
+    #bret_face_encoding = np.loadtxt("Bret_Encoding.txt", dtype = float)
+
+    sawyer_face_encoding = np.loadtxt("Sawyer_Encoding.txt", dtype=float)
+
+    #hayden_face_encoding = np.loadtxt("Hayden_Encoding.txt", dtype = float)
+
+    known_face_encodings = [
+        sawyer_face_encoding,
+        # bret_face_encoding,
+        # hayden_face_encoding,
+    ]
+    known_face_names = [
+        # "Bret",
+        "Sawyer",
+        # "Hayden",
+    ]
+
+    # Initializing arrays/variables
+    face_locations = []
+    face_encodings = []
+    face_names = []
+    process_this_frame = True
+    time.sleep(1)
     while True:
-        FRecognition()
+            
         Control()
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 if bean == 'Both':
+    FRPrep()
     while True:
         BlueTooth()
         FRecognition()
