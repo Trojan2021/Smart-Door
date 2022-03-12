@@ -6,7 +6,7 @@ In order to get this program to work you must recongifure the code to the ports 
 
 ### Dependencies:
 
-Face Recgontion For Python + Dependencies - https://github.com/ageitgey/face_recognition
+Face Recogntion For Python + Dependencies - https://github.com/ageitgey/face_recognition
 
 BlueDot - https://github.com/martinohanlon/BlueDot
 
