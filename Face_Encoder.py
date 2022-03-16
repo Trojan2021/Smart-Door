@@ -8,7 +8,10 @@ import face_recognition
 filename = 0
 def Beans():
     global filename
-    filename = filedialog.askopenfilename()
+    filename = filedialog.askopenfilename(
+        title="Open a JPG",
+        filetypes=(("JPG Files", "*.jpg"), ("All Files", "*.*"))
+    )
     source.delete(0,"end")
     source.insert(0,filename)
 
