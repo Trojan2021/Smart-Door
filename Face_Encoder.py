@@ -35,7 +35,7 @@ button = tk.Button(
 button.pack()
 
 askforname = tk.Label(
-    text="Please enter the name of the person in the picture\n(Must be appended with .txt)"
+    text="Please enter the name of the person in the picture\n(Must append name with .txt)"
 )
 askforname.pack()
 
@@ -47,6 +47,11 @@ compile = tk.Button(
     command=CompArray
 )
 compile.pack()
+
+infostatement = tk.Label(
+    text="Once you press the compile button it will stay down\nuntil the compiling is done"
+)
+infostatement.pack()
 
 close = tk.Button(
     text="Close",
