@@ -18,7 +18,7 @@ def Beans():
 def CompArray():
     image = face_recognition.load_image_file(source.get())
     face_encoding = face_recognition.face_encodings(image)[0]
-    np.savetxt(name.get(), face_encoding, delimiter = ", ")
+    np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter = ", ")
 
 window = tk.Tk()
 
@@ -58,5 +58,7 @@ close = tk.Button(
     command=window.destroy
 )
 close.pack()
+
+window.title("Face Encoder")
 
 window.mainloop()

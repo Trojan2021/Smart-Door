@@ -1,114 +1,163 @@
 #Facial Recogntion w/o Door
 
-import argparse
-import time
+import os
+import tkinter as tk
 
 import cv2
 import face_recognition
 import numpy as np
+from PIL import Image, ImageTk
 
-#Parsinig Arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--detection-method", type=str, default="hog")
-args = vars(ap.parse_args())
+global Bean
+Bean = True
+global letgo
+letgo = False
+global beenRun
+beenRun = False
 
-# Video capture
-video_capture = cv2.VideoCapture(0)
+def Face():
 
-# Photo database
+    global Bean
+    global letgo
+    global beenRun
+    beenRun = True
 
-sawyer_face_encoding = np.loadtxt("Sawyer_Encoding.txt", dtype = float)
+    if Bean:
 
-#bret_face_encoding = np.loadtxt("Bret_Encoding.txt", dtype = float)
+        startFace['text'] = "Stop Recognition"
 
-#michael_face_encoding = np.loadtxt("Michael_Encoding.txt", dtype = float)
+        Bean = False
 
-#hayden_face_encoding = np.loadtxt("Hayden_Encoding.txt", dtype = float)
+        # Video capture
+        video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
+        known_face_encodings = []
+        known_face_names = []
 
-known_face_encodings = [
-    sawyer_face_encoding,
-    #bret_face_encoding,
-    #michael_face_encoding,
-    #hayden_face_encoding,
-]
-known_face_names = [
-    "Sawyer",
-    #"Bret",
-    #"Michael",
-    #"Hayden",
-]
+        # Adding people's names and faces to lists
+        dir_path = 'Encodings'
+        count = 0
+        # Iterate directory
+        for path in os.listdir(dir_path):
 
-# Initializing arrays/variables
-face_locations = []
-face_encodings = []
-face_names = []
-process_this_frame = True
+            if os.path.isfile(os.path.join(dir_path, path)):
+                count += 1
+                face_encoding = np.loadtxt((dir_path + "/" + path), dtype = float)
+                known_face_encodings.append(face_encoding)
+                known_face_names.append(path[0:-4])
 
-while True:
-
-
-    # Analyzing frame
-    ret, frame = video_capture.read()
-
-    # Scaling for performance
-    small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation = cv2.INTER_CUBIC)
-
-    # Converting RGB to BRG
-    #rgb_small_frame = small_frame[:, :, ::-1]
-    rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-
-    if process_this_frame:
-
-        # Finds a face
-        face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-
-
-
-
+        # Initializing arrays/variables
+        face_locations = []
+        face_encodings = []
         face_names = []
+        process_this_frame = True
 
-        for face_encoding in face_encodings:
+        while True:
 
-            # Matches a face
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
-            name = "Unknown"
+            # Release handle to the webcam
+            if letgo:
+                video_capture.release()
+                letgo = False
+                break
 
-            # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
+            # Analyzing frame
+            ret, frame = video_capture.read()
 
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
+            # Scaling for performance
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation = cv2.INTER_CUBIC)
+
+            # Converting BRG to RGB
+            rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+
+            if process_this_frame:
+
+                # Finds a face
+                face_locations = face_recognition.face_locations(rgb_small_frame)
+                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+                face_names = []
+
+                for face_encoding in face_encodings:
+
+                    # Matches a face
+                    matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                    name = "Unknown"
+
+                    # Or instead, use the known face with the smallest distance to the new face
+                    face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                    best_match_index = np.argmin(face_distances)
+
+                    if matches[best_match_index]:
+                        name = known_face_names[best_match_index]
+
+                    face_names.append(name)
+
+            process_this_frame = not process_this_frame
+
+            for (top, right, bottom, left), name in zip(face_locations, face_names):
+                top *= 4
+                right *= 4
+                bottom *= 4
+                left *= 4
+
+                # Box
+                cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 255), 2)
+
+                # Dname
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 255), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+            # Display
+            blue,green,red = cv2.split(frame)
+            c = cv2.merge((red,green,blue))
+            co = Image.fromarray(c)
+            coo = ImageTk.PhotoImage(image=co)
+            picture.configure(image=coo)
+            window.update()
+    else:
+        letgo = True
+        Bean = True
+        startFace['text'] = "Start Recognition"
+        picture.configure(image=img)
+        window.update()
+
+def CloseProgram():
+    global beenRun
+    global letgo
+    if beenRun:
+        letgo = True
+        Face()
+    window.destroy()
 
 
+window = tk.Tk()
 
-            face_names.append(name)
+global img
+img = ImageTk.PhotoImage(Image.open('Media/Notyet.jpg'))
 
-    process_this_frame = not process_this_frame
+picture = tk.Label(
+    image=img
+)
+picture.pack()
 
-    for (top, right, bottom, left), name in zip(face_locations, face_names):
-        top *= 4
-        right *= 4
-        bottom *= 4
-        left *= 4
+bean = tk.Label(
+    text="Facial Recogntion Tester\n(This program only does facial recongiton\nand does not control the door)"
+)
+bean.pack()
 
-        # box
-        cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 255), 2)
+startFace = tk.Button(
+    text="Start Recognition",
+    command=Face
+)
+startFace.pack()
 
-        # Dname
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 255), cv2.FILLED)
-        font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+close = tk.Button(
+    text="Close",
+    command=CloseProgram
+)
+close.pack()
 
-    # Display
-    cv2.imshow('Video', frame)
+window.title("Facial Detection")
 
-    # Hit 'q' on the keyboard to quit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Release handle to the webcam
-video_capture.release()
-cv2.destroyAllWindows()
+window.mainloop()
