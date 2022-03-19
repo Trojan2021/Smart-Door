@@ -1,6 +1,8 @@
-#Main File To Run Door
+#Facial Recogntion w/o Door
 
+import os
 import time
+import tkinter as tk
 
 import cv2
 import face_recognition
@@ -8,35 +10,24 @@ import numpy as np
 import pigpio
 import RPi.GPIO as GPIO
 from bluedot import BlueDot
+from PIL import Image, ImageTk
 
-Deadbolt = 0
-Handle = 0
-DOpen = 0
-DClosed = 0
-HOpen = 0
-HClosed = 0
-RELAYONE = 17
-RELAYTWO = 27
-RED = 5
-GREEN = 6
+#Variable Initialization
+#All global variable are used to control the states the of different modes independently
+global Bean
+Bean = True
+global letgo
+letgo = False
+global beenRun
+beenRun = False
+global cool
 cool = False
+global timestart
 timestart = 0
-pwm = pigpio.pi()
-sawyer_face_encoding = 0
-known_face_encodings= [0, 0, 0]
-known_face_names = [0, 0, 0]
-small_frame = 0
-rgb_small_frame = 0
-face_locations = [0, 0, 0]
-face_encodings = [0, 0, 0]
-face_names = [0, 0, 0]
-matches = [0, 0, 0]
-name = 0
-face_distances = 0
-process_this_frame = True
-timenow = 0
-dtime = 0
-
+global btPressed
+btPressed = False
+global cPressed
+cPressed = False
 
 # Servos Setup
 GPIO.setmode(GPIO.BCM)
@@ -112,170 +103,276 @@ def RedOn():
     GPIO.setup(GREEN, GPIO.OUT)
     GPIO.output(GREEN, True)
 
-cool = False
-timestart = 0
-
-def FRPrep ():
-    
-
-    # Photo database
-    #bret_face_encoding = np.loadtxt("Bret_Encoding.txt", dtype = float)
-
-    sawyer_face_encoding = np.loadtxt("Sawyer_Encoding.txt", dtype=float)
-
-    #hayden_face_encoding = np.loadtxt("Hayden_Encoding.txt", dtype = float)
-
-    known_face_encodings = [
-        sawyer_face_encoding,
-        # bret_face_encoding,
-        # hayden_face_encoding,
-    ]
-    known_face_names = [
-        # "Bret",
-        "Sawyer",
-        # "Hayden",
-    ]
-
-    # Initializing arrays/variables
-    face_locations = []
-    face_encodings = []
-    face_names = []
-    global process_this_frame 
-    process_this_frame = True
-
-def FRecognition():
-
-    # Analyzing frame
-    ret, frame = video_capture.read()
-
-    # Scaling for performance
-    small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC)
-
-    # Converting RGB to BRG
-    rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
-
-    global process_this_frame 
-    if process_this_frame:
-
-        # Finds a face
-        face_locations = face_recognition.face_locations(rgb_small_frame)
-        face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
-
-        # LED settings
-
-        face_names = []
-
-        for face_encoding in face_encodings:
-
-            # Matches a face
-            matches = face_recognition.compare_faces(
-                known_face_encodings, face_encoding)
-            name = "Unknown"
-
-            # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(
-                known_face_encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-
-            if matches[best_match_index]:
-                name = known_face_names[best_match_index]
-
-                # Telling Door To Toggle
-                if cool == False:
-                    timestart = time.time()
-                    cool = True
-
-            face_names.append(name)
-
-    process_this_frame = not process_this_frame
-
-    for (top, right, bottom, left), name in zip(face_locations, face_names):
-        top *= 4
-        right *= 4
-        bottom *= 4
-        left *= 4
-
-        # box
-        cv2.rectangle(frame, (left, top),
-                      (right, bottom), (255, 0, 255), 2)
-
-        # Dname
-        cv2.rectangle(frame, (left, bottom - 35),
-                      (right, bottom), (255, 0, 255), cv2.FILLED)
-        font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name, (left + 6, bottom - 6),
-                    font, 1.0, (255, 255, 255), 1)
-
-    # Display
-    cv2.imshow('Video', frame)
-
-def BlueTooth():
-    bd = BlueDot()
-    # Bluetooth
-    if (bd.is_pressed == True):
-        if cool == False:
-            timestart = time.time()
-            cool = True
-
-def Control():
-    if cool == True:
-        GreenOn()
-        timenow = time.time()
-        dtime = timenow - timestart
-        print(dtime)
-        if dtime < 2:
-            DeadOpen()
-            HandleOpen()
-        if dtime > 2 and dtime < 4.25:
-            MotorOpen()
-        if dtime > 4.25 and dtime < 6.25:
-            HandleClosed()
-            MotorStop()
-        if dtime > 6.25 and dtime < 10.25:
-            MotorClose()
-        if dtime > 10.25:
-            DeadClosed()
-            MotorStop()
-            RedOn()
-            cool = False
-    else:
-        HandleClosed()
-        DeadClosed()
-        RedOn()
+def actuateDoor():
+    global cool
+    global timestart
+    if cool == False:
+        timestart = time.time()
+        cool = True
 
 
+def Face():
+    global Bean
+    global letgo
+    global beenRun
+    beenRun = True
 
+    if Bean:
 
-bean = input('\nPlease enter the mode you would like to enter.\n FR, BT, Both\n')
+        startFace['text'] = "Stop Recognition"
 
+        Bean = False
 
-
-if bean == 'BT':
-    while True:
-        BlueTooth()
-        Control()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-if bean == 'FR':
-    FRPrep()
-    while True:
         # Video capture
-        video_capture = cv2.VideoCapture(0)
-        FRecognition()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-if bean == 'Both':
-    FRPrep()
-    while True:
-        BlueTooth()
-        FRecognition()
-        Control()
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+        known_face_encodings = []
+        known_face_names = []
+
+        # Adding people's names and faces to lists
+        dir_path = 'Encodings'
+        count = 0
+        # Iterate directory
+        for path in os.listdir(dir_path):
+
+            if os.path.isfile(os.path.join(dir_path, path)):
+                count += 1
+                face_encoding = np.loadtxt((dir_path + "/" + path), dtype = float)
+                known_face_encodings.append(face_encoding)
+                known_face_names.append(path[0:-4])
+
+        # Initializing arrays/variables
+        face_locations = []
+        face_encodings = []
+        face_names = []
+        process_this_frame = True
+
+        while True:
+
+            # Release handle to the webcam
+            if letgo:
+                video_capture.release()
+                letgo = False
+                break
+
+            # Analyzing frame
+            ret, frame = video_capture.read()
+
+            # Scaling for performance
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation = cv2.INTER_CUBIC)
+
+            # Converting BRG to RGB
+            rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
+
+            if process_this_frame:
+
+                # Finds a face
+                face_locations = face_recognition.face_locations(rgb_small_frame)
+                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+                face_names = []
+
+                for face_encoding in face_encodings:
+
+                    # Matches a face
+                    matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                    name = "Unknown"
+
+                    # Or instead, use the known face with the smallest distance to the new face
+                    face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                    best_match_index = np.argmin(face_distances)
+
+                    if matches[best_match_index]:
+                        name = known_face_names[best_match_index]
+
+                        #Door Control
+                        actuateDoor()
+
+                    face_names.append(name)
+
+            process_this_frame = not process_this_frame
+
+            for (top, right, bottom, left), name in zip(face_locations, face_names):
+                top *= 4
+                right *= 4
+                bottom *= 4
+                left *= 4
+
+                # Box
+                cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 255), 2)
+
+                # Dname
+                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 255), cv2.FILLED)
+                font = cv2.FONT_HERSHEY_DUPLEX
+                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+            # Display
+            blue,green,red = cv2.split(frame)
+            c = cv2.merge((red,green,blue))
+            co = Image.fromarray(c)
+            coo = ImageTk.PhotoImage(image=co)
+            picture.configure(image=coo)
+            window.update()
+    else:
+        letgo = True
+        Bean = True
+        startFace['text'] = "Start Recognition"
+        picture.configure(image=img)
+        window.update()
+
+def btToggle():
+    global cool
+    global timestart
+    global btPressed
+
+    if not btPressed:
+
+        btPressed = True
+        bt['text'] = "Stop Bluetooth"
+        window.update()
+        bd = BlueDot()
+        BlueDot.start()
+        while True:
+
+            if (bd.is_pressed == True):
+                actuateDoor()
+            if not btPressed:
+                break
+    else:
+        btPressed = False
+        BlueDot.stop()
+        bt['text'] = "Start Bluetooth"
+        window.update()
+
+def CloseProgram():
+    global beenRun
+    global letgo
+    global cPressed
+    global btPressed
+    cPressed = True
+    control()
+    btPressed = True
+    btToggle()
+    if beenRun:
+        letgo = True
+        Face()
+    window.destroy()
+
+def control():
+    global cool
+    global timestart
+    global cPressed
+
+    if not cPressed:
+        cPressed = True
+        cb['text'] = "Stop Controls"
+        while True:
+
+            if cool == True:
+                GreenOn()
+                timenow = time.time()
+                dtime = timenow - timestart
+                print(dtime)
+                if dtime < 2:
+                    DeadOpen()
+                    HandleOpen()
+                if dtime > 2 and dtime < 4.25:
+                    MotorOpen()
+                if dtime > 4.25 and dtime < 6.25:
+                    HandleClosed()
+                    MotorStop()
+                if dtime > 6.25 and dtime < 10.25:
+                    MotorClose()
+                if dtime > 10.25:
+                    DeadClosed()
+                    MotorStop()
+                    RedOn()
+                    cool = False
+            else:
+                HandleClosed()
+                DeadClosed()
+                RedOn()
+            if not cPressed:
+                break
+    else:
+        cPressed = False
+        cb['text'] = "Start Controls"
+        window.update()
 
 
 
 
-# Release handle to the webcam
-video_capture.release()
-cv2.destroyAllWindows()
+
+window = tk.Tk()
+
+global img
+img = ImageTk.PhotoImage(Image.open('Media/Notyet.jpg'))
+
+picture = tk.Label(
+    image=img
+)
+picture.pack()
+
+bean = tk.Label(
+    text="Facial Recogntion Tester\n(This program only does facial recongiton\nand does not control the door)"
+)
+bean.pack()
+
+warning = tk.Label(
+    text="Facial Detection, Bluetooth, and the\ndoor toggle below will not work unless\nthe controls have been turned on"
+)
+warning.pack()
+
+doorToggle = tk.Button(
+    text="Toggle Door Actuation",
+    command=actuateDoor
+)
+doorToggle.pack()
+
+toggle = tk.Label(
+    text="This will tell the door to open at any point"
+)
+toggle.pack()
+
+startFace = tk.Button(
+    text="Start Recognition",
+    command=Face
+)
+startFace.pack()
+
+sf = tk.Label(
+    text="This will toggle facial recognition"
+)
+sf.pack()
+
+bt = tk.Button(
+    text="Start Bluetooth",
+    command=btToggle
+)
+bt.pack()
+
+bl = tk.Label(
+    text="This will toggle the bluetooth"
+)
+bl.pack()
+
+cb = tk.Button(
+    text="Start Controls",
+    command=control
+)
+cb.pack()
+
+cl = tk.Label(
+    text="This will toggle the controls"
+)
+cl.pack()
+
+close = tk.Button(
+    text="Close",
+    command=CloseProgram
+)
+close.pack()
+
+window.title("Facial Detection")
+
+window.mainloop()
