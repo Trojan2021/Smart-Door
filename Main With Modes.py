@@ -12,6 +12,7 @@ import pigpio
 import RPi.GPIO as GPIO
 from bluedot import BlueDot
 from PIL import Image, ImageTk
+from sys import platform
 
 #Variable Initialization
 #All global variable are used to control the states the of different modes independently
@@ -125,7 +126,10 @@ def Face():
         Bean = False
 
         # Video capture
-        video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        if platform == "linux":
+            video_capture = cv2.VideoCapture(0)
+        elif platform == "win32":
+            video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
         known_face_encodings = []
         known_face_names = []
@@ -231,17 +235,18 @@ def btToggle():
         btPressed = True
         bt['text'] = "Stop Bluetooth"
         window.update()
+        global bd
         bd = BlueDot()
-        BlueDot.start()
         while True:
-
+            
+            window.update()
             if (bd.is_pressed == True):
                 actuateDoor()
             if not btPressed:
                 break
     else:
         btPressed = False
-        BlueDot.stop()
+        bd.stop()
         bt['text'] = "Start Bluetooth"
         window.update()
 
@@ -269,11 +274,11 @@ def control():
         cb['text'] = "Stop Controls"
         while True:
 
+            window.update()
             if cool == True:
                 GreenOn()
                 timenow = time.time()
                 dtime = timenow - timestart
-                print(dtime)
                 if dtime < 2:
                     DeadOpen()
                     HandleOpen()

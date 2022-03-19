@@ -7,6 +7,7 @@ import cv2
 import face_recognition
 import numpy as np
 from PIL import Image, ImageTk
+from sys import platform
 
 global Bean
 Bean = True
@@ -29,7 +30,10 @@ def Face():
         Bean = False
 
         # Video capture
-        video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        if platform == "linux":
+            video_capture = cv2.VideoCapture(0)
+        elif platform == "win32":
+            video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
         known_face_encodings = []
         known_face_names = []
