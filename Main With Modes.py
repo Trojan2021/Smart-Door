@@ -30,7 +30,9 @@ global btPressed
 btPressed = False
 global cPressed
 cPressed = False
-
+global bd
+bd = BlueDot()
+    
 # Servos Setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -111,6 +113,7 @@ def actuateDoor():
     if cool == False:
         timestart = time.time()
         cool = True
+        print("beans")
 
 
 def Face():
@@ -226,17 +229,13 @@ def Face():
         window.update()
 
 def btToggle():
-    global cool
-    global timestart
     global btPressed
-
+    
     if not btPressed:
 
         btPressed = True
         bt['text'] = "Stop Bluetooth"
         window.update()
-        global bd
-        bd = BlueDot()
         while True:
             
             window.update()
@@ -246,7 +245,6 @@ def btToggle():
                 break
     else:
         btPressed = False
-        bd.stop()
         bt['text'] = "Start Bluetooth"
         window.update()
 
@@ -259,6 +257,7 @@ def CloseProgram():
     control()
     btPressed = True
     btToggle()
+    bd.stop()
     if beenRun:
         letgo = True
         Face()
@@ -275,10 +274,11 @@ def control():
         while True:
 
             window.update()
-            if cool == True:
+            while cool == True:
                 GreenOn()
                 timenow = time.time()
                 dtime = timenow - timestart
+                print(dtime)
                 if dtime < 2:
                     DeadOpen()
                     HandleOpen()
