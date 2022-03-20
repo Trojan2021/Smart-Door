@@ -13,6 +13,7 @@ from bluedot import BlueDot
 from PIL import Image, ImageTk
 
 #Variable Initialization
+
 global overall
 overall = True
 global mainOn
