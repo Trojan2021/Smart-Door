@@ -1,4 +1,4 @@
-#Facial Recogntion w/o Door
+#Facial Recogntion with Door
 
 import os
 import time
