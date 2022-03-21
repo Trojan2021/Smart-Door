@@ -107,6 +107,7 @@ def Main():
     global btOn
     global faceOn
     global letGo
+    global img
 
     if overall:
         overall = False
@@ -241,7 +242,9 @@ def Main():
         btOn = False
         bluetooth['text'] = "Start Bluetooth"
         faceOn = False
+        fr['text'] = "Start Facial Recognition"
         mainOn = False
+        picture.configure(image=img)
         window.update()
 
 
@@ -287,6 +290,11 @@ picture = tk.Label(
     image=img
 )
 picture.pack()
+
+dead = tk.Label(
+    text="Deadbolt is closed"
+)
+dead.pack()
 
 main = tk.Button(
     text="Start Program",
