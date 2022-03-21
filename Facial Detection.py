@@ -138,7 +138,7 @@ def CloseProgram():
 window = tk.Tk()
 
 global img
-img = ImageTk.PhotoImage(Image.open('Media\logo_with_text.jpg'))
+img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
 
 picture = tk.Label(
     image=img
