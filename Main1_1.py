@@ -254,7 +254,9 @@ def Main():
         faceOn = False
         fr['text'] = "Start Facial Recognition"
         mainOn = False
+        main['text'] = "Start Program"
         picture.configure(image=img)
+        
         window.update()
 
 
