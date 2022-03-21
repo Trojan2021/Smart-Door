@@ -111,6 +111,9 @@ def Main():
 
     if overall:
         overall = False
+        cool = False
+        mainOn = True
+        main['text'] = "Stop Program"
 
         #Face Prep
 
@@ -150,7 +153,7 @@ def Main():
                         cool = True
 
             #Face Recogntion
-            if faceOn:
+            if faceOn and not letGo:
                 # Analyzing frame
                 ret, frame = video_capture.read()
 
@@ -210,7 +213,9 @@ def Main():
                 co = Image.fromarray(c)
                 coo = ImageTk.PhotoImage(image=co)
                 picture.configure(image=coo)
-                window.update()
+            elif letGo:
+                letGo = False
+                picture.configure(image=img)
 
             #Control of Door
             if cool == True:
@@ -237,8 +242,13 @@ def Main():
                 HandleClosed()
                 DeadClosed()
                 RedOn()
-            window.update()
+            try:
+                window.update()
+            except:
+                cool_beans = False
     else:
+        overall = True
+
         btOn = False
         bluetooth['text'] = "Start Bluetooth"
         faceOn = False
@@ -253,7 +263,7 @@ def btToggle():
     if btOn:
         btOn = False
         bluetooth['text'] = "Start Bluetooth"
-    if not btOn:
+    elif not btOn:
         btOn = True
         bluetooth['text'] = "Stop Bluetooth"
     window.update()
@@ -265,7 +275,7 @@ def faceToggle():
         faceOn = False
         letGo = True
         fr['text'] = "Start Facial Recognition"
-    if not faceOn:
+    elif not faceOn:
         faceOn = True
         fr['text'] = "Stop Facial Recognition"
     window.update()
@@ -281,10 +291,11 @@ def Close():
     mainOn = False
     window.destroy()
 
-global img
-img = ImageTk.PhotoImage(Image.open('Media/Notyet.jpg'))
 
 window = tk.Tk()
+
+global img
+img = ImageTk.PhotoImage(Image.open('Media/Notyet.jpg'))
 
 picture = tk.Label(
     image=img
@@ -306,16 +317,19 @@ bluetooth = tk.Button(
     text="Start Bluetooth",
     command=btToggle
 )
+bluetooth.pack()
 
 fr = tk.Button(
     text="Start Facial Recognition",
     command=faceToggle
 )
+fr.pack()
 
 close = tk.Button(
     text="Close",
     command=Close
 )
+close.pack()
 
 window.title("Smart Door Control")
 
