@@ -110,12 +110,14 @@ def Main():
     global faceOn
     global letGo
     global img
+    global DeadBolt
 
     if overall:
         overall = False
         cool = False
         mainOn = True
         main['text'] = "Stop Program"
+        Beans = False
 
         #Face Prep
 
@@ -220,7 +222,8 @@ def Main():
                 picture.configure(image=img)
 
             #Control of Door
-            if cool == True and not DeadBolt:
+            if (cool == True and not DeadBolt) or Beans:
+                Beans = True
                 GreenOn()
                 timenow = time.time()
                 dtime = timenow - timestart
@@ -236,14 +239,17 @@ def Main():
                 if dtime > 6.25 and dtime < 10.25:
                     MotorClose()
                 if dtime > 10.25:
-                    DeadClosed()
                     MotorStop()
                     RedOn()
                     cool = False
+                    Beans = False
+            elif not DeadBolt:
+                DeadOpen()
             else:
                 HandleClosed()
                 DeadClosed()
                 RedOn()
+                cool = False
             try:
                 window.update()
             except:
@@ -317,17 +323,22 @@ picture = tk.Label(
 )
 picture.pack()
 
-dead = tk.Button(
-    text="Deadbolt is closed",
-    command=Dead
+warning = tk.Label(
+    text="In order for the door to open the deadbolt must be open"
 )
-dead.pack()
+warning.pack()
 
 main = tk.Button(
     text="Start Program",
     command=Main
 )
 main.pack()
+
+dead = tk.Button(
+    text="Open Deadbolt",
+    command=Dead
+)
+dead.pack()
 
 bluetooth = tk.Button(
     text="Start Bluetooth",
