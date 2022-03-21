@@ -24,6 +24,8 @@ global faceOn
 faceOn = False
 global letGo
 letGo = False
+global Deadbolt
+DeadBolt = True
 
 bd = BlueDot()
 
@@ -218,7 +220,7 @@ def Main():
                 picture.configure(image=img)
 
             #Control of Door
-            if cool == True:
+            if cool == True and not DeadBolt:
                 GreenOn()
                 timenow = time.time()
                 dtime = timenow - timestart
@@ -255,8 +257,10 @@ def Main():
         fr['text'] = "Start Facial Recognition"
         mainOn = False
         main['text'] = "Start Program"
+        DeadBolt = True
+        dead['text'] = "Open Deadbolt"
         picture.configure(image=img)
-        
+
         window.update()
 
 
@@ -282,6 +286,15 @@ def faceToggle():
         fr['text'] = "Stop Facial Recognition"
     window.update()
 
+def Dead():
+    global DeadBolt
+    if DeadBolt:
+        DeadBolt = False
+        dead['text'] = "Close Deadbolt"
+    elif not DeadBolt:
+        DeadBolt = True
+        dead['text'] = "Open Deadbolt"
+
 def Close():
     global btOn
     global faceOn
@@ -304,8 +317,9 @@ picture = tk.Label(
 )
 picture.pack()
 
-dead = tk.Label(
-    text="Deadbolt is closed"
+dead = tk.Button(
+    text="Deadbolt is closed",
+    command=Dead
 )
 dead.pack()
 
