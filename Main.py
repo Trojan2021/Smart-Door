@@ -317,7 +317,7 @@ def Main():
                     cool = False
                     Beans = False
 
-            # if the DeadBolt is Flase then allow for the door to be opened manually with the handle
+            # If the DeadBolt is Flase then allow for the door to be opened manually with the handle
             elif not DeadBolt:
                 DeadOpen()
                 RedOn()
@@ -337,6 +337,8 @@ def Main():
 
                 # Updates the GUI with all changed that have been made
                 window.update()
+
+            # This is to make the try work
             except:
                 cool_beans = False
 
