@@ -13,7 +13,6 @@ from bluedot import BlueDot
 from PIL import Image, ImageTk
 
 #Variable Initialization
-
 global overall
 overall = True
 global btOn
@@ -25,20 +24,23 @@ letGo = False
 global Deadbolt
 DeadBolt = True
 
+# Start the bluetooth server and get BlueDot ready to be used
 bd = BlueDot()
 
 # Servos Setup
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+# Setting pins to variables
 Deadbolt = 19
 Handle = 26
+# You can't use GPIO for servo because it causes jittering
 pwm = pigpio.pi()
 pwm.set_mode(Deadbolt, pigpio.OUTPUT)
 pwm.set_mode(Handle, pigpio.OUTPUT)
 pwm.set_PWM_frequency(Deadbolt, 50)
 pwm.set_PWM_frequency(Handle, 50)
 
-# Deadbolt Servo Setup
+# Setting where the servos need to turn to for the deadbolt
 DOpen = 1750
 DClosed = 2500
 
@@ -48,7 +50,7 @@ def DeadOpen():
 def DeadClosed():
     pwm.set_servo_pulsewidth(Deadbolt, DClosed)
 
-# Handle Servo Setup
+# Setting where the servos need to turn to open the handle
 HOpen = 800
 HClosed = 1500
 
@@ -59,7 +61,7 @@ def HandleClosed():
     pwm.set_servo_pulsewidth(Handle, HClosed)
 
 # Motor Setup
-
+# Setting pins for relay
 RELAYONE = 17
 RELAYTWO = 27
 
@@ -79,7 +81,7 @@ def MotorStop():
     GPIO.output(RELAYONE, GPIO.HIGH)
 
 # LED Setup
-
+# Pins for LEDs
 RED = 5
 GREEN = 6
 GPIO.setup(RED, GPIO.OUT)
