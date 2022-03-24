@@ -43,5 +43,6 @@
 
 #### After MakeOHI/O, we began to upgrade the door handle by having the servos connected directly to the dead bolt and the door handle. With the servos connected directly, the door can be opened both manually and via the facial recognition without ruining the functionability of the door. We also added a GUI to the code to make the program easier to use. ALong with a GUI, encodings and pictures will now be stored in their own designated folders making data storage more simple and organized.
 
-
+![Second Prototype](https://media.discordapp.net/attachments/949748466425417808/956575450249986118/IMG_1884.jpg?width=497&height=662) 
+<figcaption align = "center">Picture of servos attached to door handle and deadbolt</figcaption>
 
