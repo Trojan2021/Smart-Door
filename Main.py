@@ -1,4 +1,4 @@
-#Attempt at v1.1
+#Main v1.1.1 Beta
 import os
 import time
 import tkinter as tk
@@ -16,8 +16,6 @@ from PIL import Image, ImageTk
 
 global overall
 overall = True
-global mainOn
-mainOn = True
 global btOn
 btOn = False
 global faceOn
@@ -103,42 +101,64 @@ def RedOn():
     GPIO.setup(GREEN, GPIO.OUT)
     GPIO.output(GREEN, True)
 
+# Main function
+# This is in a function because of Tkinter. With Tkinter it is able to be called while it is still running
+# so with that the main is turned into a toggle for itself so it may be called again to turn itself off.
+
 def Main():
+
+    #Variable initialization for states and toggles
     global overall
-    global mainOn
     global btOn
     global faceOn
     global letGo
     global img
     global DeadBolt
 
+    # Check to see if it has been run yet
+    # If run then start prepping for door functions
     if overall:
+
+        # Set overall to False so its ready to be called again for the toggle
         overall = False
+
+        # Set cool to false to prep the timer in control so it can be turned on
         cool = False
-        mainOn = True
+
+        # Update GUI
         main['text'] = "Stop Program"
+
+        # Ensure that the controls/counter continues to run to make sure the door is not stuck in an in between state
         Beans = False
 
-        #Face Prep
-
         # Video capture
+        # Check to see if the user is on linux or windows to capture video correctly
         if platform == "linux":
             video_capture = cv2.VideoCapture(0)
         elif platform == "win32":
             video_capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+
+        # Initializing lists for facial recognition later
         known_face_encodings = []
         known_face_names = []
 
         # Adding people's names and faces to lists
+        #Telling which folder to search in for encodings
         dir_path = 'Encodings'
-        count = 0
-        # Iterate directory
+
+        # The amount of files and folders in the directory
         for path in os.listdir(dir_path):
 
+            # If the item is a file then read it in
             if os.path.isfile(os.path.join(dir_path, path)):
-                count += 1
+
+                # Load the file in and save to a variable
                 face_encoding = np.loadtxt((dir_path + "/" + path), dtype = float)
+
+                # Place the variable into a list
                 known_face_encodings.append(face_encoding)
+
+                # Take the name of the file and take off the .txt and use that as the name for the encoding
                 known_face_names.append(path[0:-4])
 
         # Initializing arrays/variables
@@ -147,24 +167,34 @@ def Main():
         face_names = []
         process_this_frame = True
 
-        while mainOn:
+        # Run while Main is toggled on
+        while not overall:
 
-            #Bluetooth
+            # Bluetooth
+            # Checking to see if bluetooth is toggled on
             if btOn:
+                # If the button on the app is being pressed then continue
                 if (bd.is_pressed == True):
+
+                    # Checking to see if the timer is not already running
                     if cool == False:
+
+                        # Setting a variable to the time the button was pressed
                         timestart = time.time()
+
+                        # Ensuring the timer can't be run again until it is finished
                         cool = True
 
-            #Face Recogntion
+            # Face Recogntion
+            # If Face is toggled on and not being told to let go of video stream then continue
             if faceOn and not letGo:
-                # Analyzing frame
+                # Taking in a frame from the video to checked for faces
                 ret, frame = video_capture.read()
 
-                # Scaling for performance
+                # Resizing the frame to be a quarter of normal size for performance
                 small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation = cv2.INTER_CUBIC)
 
-                # Converting BRG to RGB
+                # Converting BGR array to RGB array
                 rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
 
                 if process_this_frame:
@@ -261,7 +291,6 @@ def Main():
         bluetooth['text'] = "Start Bluetooth"
         faceOn = False
         fr['text'] = "Start Facial Recognition"
-        mainOn = False
         main['text'] = "Start Program"
         DeadBolt = True
         dead['text'] = "Open Deadbolt"
@@ -304,12 +333,12 @@ def Dead():
 def Close():
     global btOn
     global faceOn
-    global mainOn
+    global overall
     global letGo
     letGo = True
     btOn = False
     faceOn = False
-    mainOn = False
+    overall = True
     window.destroy()
 
 
