@@ -34,3 +34,9 @@
 ![Second Prototype](https://media.discordapp.net/attachments/949748466425417808/950021804020351018/IMG_1827.jpg?width=497&height=662) 
 <figcaption align = "center">Picture of MakeOHI/O Prototype</figcaption>
 
+<br>
+
+## Second Prototype Improvements (Post-Make OHI/O 2022)
+
+#### After MakeOHI/O, we began to upgrade the door handle by having the servos connected directly to the dead bolt and the door handle. With the servos connected directly, the door can be opened both manually and via the facial recognition without ruining the functionability of the door.
+
