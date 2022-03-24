@@ -51,8 +51,8 @@ def DeadClosed():
     pwm.set_servo_pulsewidth(Deadbolt, DClosed)
 
 # Setting where the servos need to turn to open the handle
-HOpen = 800
-HClosed = 1500
+HOpen = 1000
+HClosed = 1700
 
 def HandleOpen():
     pwm.set_servo_pulsewidth(Handle, HOpen)
@@ -298,7 +298,7 @@ def Main():
                 dtime = timenow - timestart
 
                 # Prints the amount of time that has passed (uncomment for use)
-                #print(dtime)
+                print(dtime)
 
                 # dtime is the timer so open, stop, close, stop
                 if dtime < 2:
