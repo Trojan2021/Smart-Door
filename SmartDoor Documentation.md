@@ -27,10 +27,22 @@
 
 <br>
 
+![Initial Prototype Improvements](https://media.discordapp.net/attachments/904437288413581332/956567840276750356/bluedot_without_slur.png?width=319&height=663) 
+<figcaption align = "center">Picture of Bluedot app for bluetooth</figcaption>
+
 ## Second Prototype (MakeOHI/O 2022)
 
 #### At MakeOHI/O, our primary focus was to upgrade the door and upscale the entire project to an actual door that would be used in the real world. We used servos to lock and unlock the door, a motor to automatically open door when it unlocks, a power supply to run the motor, a Raspberry Pi to run the code, a camera for facial recognition, and LED lights to show the status of the door being locked or unlocked. The code also had to be improved upon to work with the motor and servos to simultaneously unlock, open, close, and lock the door. 
 
 ![Second Prototype](https://media.discordapp.net/attachments/949748466425417808/950021804020351018/IMG_1827.jpg?width=497&height=662) 
 <figcaption align = "center">Picture of MakeOHI/O Prototype</figcaption>
+
+<br>
+
+## Second Prototype Improvements (Post-Make OHI/O 2022)
+
+#### After MakeOHI/O, we began to upgrade the door handle by having the servos connected directly to the dead bolt and the door handle. With the servos connected directly, the door can be opened both manually and via the facial recognition without ruining the functionability of the door. We also added a GUI to the code to make the program easier to use. ALong with a GUI, encodings and pictures will now be stored in their own designated folders making data storage more simple and organized.
+
+![Second Prototype](https://media.discordapp.net/attachments/949748466425417808/956575450249986118/IMG_1884.jpg?width=497&height=662) 
+<figcaption align = "center">Picture of servos attached to door handle and deadbolt</figcaption>
 
