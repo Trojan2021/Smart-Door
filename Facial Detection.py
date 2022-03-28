@@ -140,30 +140,43 @@ def CloseProgram():
 
 window = tk.Tk()
 
+window.geometry('1024x600')
+
+# If on the Pi go fullscreen
+if platform == "linux":
+    window.attributes('-fullscreen', True)
+
+
 global img
 img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
 
 picture = tk.Label(
     image=img
 )
-picture.pack()
+picture.place(x=30, y = 20)
 
 bean = tk.Label(
-    text="Facial Recogntion Tester\n(This program only does facial recongiton\nand does not control the door)"
+    text="Facial Recogntion Tester\n(This program only does facial recongiton and does not control the door)"
 )
-bean.pack()
+bean.place(x=150, y=505)
 
 startFace = tk.Button(
     text="Start Recognition",
-    command=Face
+    command=Face,
+    height=10,
+    width=25,
+    font=30
 )
-startFace.pack()
+startFace.place(x=690, y=20)
 
 close = tk.Button(
     text="Close",
-    command=CloseProgram
+    command=CloseProgram,
+    height=10,
+    width=25,
+    font=30
 )
-close.pack()
+close.place(x=690, y=320)
 
 window.title("Facial Detection")
 
