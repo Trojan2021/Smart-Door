@@ -54,7 +54,7 @@ def Face():
         face_locations = []
         face_encodings = []
         face_names = []
-        process_this_frame = True
+        perfCount = 0
 
         while True:
 
@@ -73,7 +73,9 @@ def Face():
             # Converting BRG to RGB
             rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
 
-            if process_this_frame:
+            if perfCount == 0:
+
+                perfCount = 5
 
                 # Finds a face
                 face_locations = face_recognition.face_locations(rgb_small_frame)
@@ -96,7 +98,8 @@ def Face():
 
                     face_names.append(name)
 
-            process_this_frame = not process_this_frame
+            perfCount -= 1
+
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 top *= 4
