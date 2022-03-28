@@ -300,7 +300,7 @@ def Main():
                 dtime = timenow - timestart
 
                 # Prints the amount of time that has passed (uncomment for use)
-                #print(dtime)
+                # print(dtime)
 
                 # dtime is the timer so open, stop, close, stop
                 if dtime < 2:
