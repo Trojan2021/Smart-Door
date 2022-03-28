@@ -51,7 +51,7 @@ def DeadClosed():
     pwm.set_servo_pulsewidth(Deadbolt, DClosed)
 
 # Setting where the servos need to turn to open the handle
-HOpen = 1000
+HOpen = 1200
 HClosed = 1700
 
 def HandleOpen():
