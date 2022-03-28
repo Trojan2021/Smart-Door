@@ -29,8 +29,8 @@ DeadBolt = True
 # Start the bluetooth server and get BlueDot ready to be used
 bd = BlueDot(cols = 3, rows = 1)
 bd[0,0].color = "blue"
-bd[0,1].visible = False
-bd[0,2].color = "red"
+bd[1,0].visible = False
+bd[2,0].color = "red"
 
 # Servos Setup
 GPIO.setmode(GPIO.BCM)
@@ -182,10 +182,10 @@ def Main():
             if btOn:
                 
                 # If the red button on the app is being pressed then continue
-                if (bd[0,2].is_pressed == True):
-                    
+                if (bd[2,0].is_pressed == True):
+                    bd[2,0].when_released = Dead
                     # Open/Closes the Deadbolt
-                    Dead()
+                    #Dead()
                     
                 # If the blue button on the app is being pressed then continue
                 if (bd[0,0].is_pressed == True):
