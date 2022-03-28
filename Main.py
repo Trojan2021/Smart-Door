@@ -414,6 +414,13 @@ def Close():
 # Define the Tkinter GUI as window
 window = tk.Tk()
 
+#Setting the window size for the pi
+window.geometry('1024x600')
+
+# If on the Pi go fullscreen
+if platform == "linux":
+    window.attributes('-fullscreen', True)
+
 # Setting up the logo to be used
 global img
 img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
@@ -422,48 +429,58 @@ img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
 picture = tk.Label(
     image=img
 )
-picture.pack()
+picture.place(x=30, y = 20)
 
 # Display the deadbolt warning
 warning = tk.Label(
     text="In order for the door to open the deadbolt must be open"
 )
-warning.pack()
+warning.place(x=130, y=505)
 
 # The button that toggles the program
 main = tk.Button(
     text="Start Program",
-    command=Main
+    command=Main,
+    height=3,
+    font=30
 )
-main.pack()
+main.place(x=690, y=20)
 
 # The button that toggles the deadbolt
 dead = tk.Button(
     text="Open Deadbolt",
-    command=Dead
+    command=Dead,
+    height=3,
+    font=30
 )
-dead.pack()
+dead.place(x=690, y=50)
 
 # The button that toggles Bluetooth
 bluetooth = tk.Button(
     text="Start Bluetooth",
-    command=btToggle
+    command=btToggle,
+    height=3,
+    font=30
 )
-bluetooth.pack()
+bluetooth.place(x=690, y=80)
 
 # The button that toggles facial recognition
 fr = tk.Button(
     text="Start Facial Recognition",
-    command=faceToggle
+    command=faceToggle,
+    height=3,
+    font=30
 )
-fr.pack()
+fr.place(x=690, y=110)
 
 # The button that closes the program
 close = tk.Button(
     text="Close",
-    command=Close
+    command=Close,
+    height=3,
+    font=30
 )
-close.pack()
+close.place(x=690, y=140)
 
 # Setting the title of the GUI that displpays
 window.title("Smart Door Control")
