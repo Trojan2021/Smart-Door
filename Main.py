@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #Main v1.1.1 Beta
 import os
 import time
