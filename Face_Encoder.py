@@ -25,15 +25,15 @@ def Beans():
 
 def CompArray():
     if source.get() == "From Picture":
-        image = face_recognition.load_image_file("Media/tempfile.png")
+        image = face_recognition.load_image_file("Media/tempfile.jpg")
         face_encoding = face_recognition.face_encodings(image)[0]
         np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter = ", ")
     else:
         image = face_recognition.load_image_file(source.get())
         face_encoding = face_recognition.face_encodings(image)[0]
         np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter = ", ")
-    if os.path.exists("Media/tempfile.png"):
-      os.remove("Media/tempfile.png")
+    if os.path.exists("Media/tempfile.jpg"):
+      os.remove("Media/tempfile.jpg")
 
 def takePicture():
 
@@ -65,9 +65,13 @@ def takePicture():
             window.update()
 
 
-        cv2.imwrite("Media/tempfile.png", frame)
+        cv2.imwrite("Media/tempfile.jpg", frame)
 
         video_capture.release()
+
+        picture.configure(image=img)
+        camera['text'] = "Open Camera"
+        window.update()
 
 
     else:
