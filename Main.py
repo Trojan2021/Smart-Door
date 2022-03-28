@@ -298,7 +298,7 @@ def Main():
                 dtime = timenow - timestart
 
                 # Prints the amount of time that has passed (uncomment for use)
-                print(dtime)
+                #print(dtime)
 
                 # dtime is the timer so open, stop, close, stop
                 if dtime < 2:
@@ -444,7 +444,7 @@ main = tk.Button(
     height=3,
     font=30
 )
-main.place(x=690, y=20)
+main.place(x=690, y=50)
 
 # The button that toggles the deadbolt
 dead = tk.Button(
@@ -453,7 +453,7 @@ dead = tk.Button(
     height=3,
     font=30
 )
-dead.place(x=690, y=50)
+dead.place(x=690, y=150)
 
 # The button that toggles Bluetooth
 bluetooth = tk.Button(
@@ -462,7 +462,7 @@ bluetooth = tk.Button(
     height=3,
     font=30
 )
-bluetooth.place(x=690, y=80)
+bluetooth.place(x=690, y=250)
 
 # The button that toggles facial recognition
 fr = tk.Button(
@@ -471,7 +471,7 @@ fr = tk.Button(
     height=3,
     font=30
 )
-fr.place(x=690, y=110)
+fr.place(x=690, y=350)
 
 # The button that closes the program
 close = tk.Button(
@@ -480,7 +480,7 @@ close = tk.Button(
     height=3,
     font=30
 )
-close.place(x=690, y=140)
+close.place(x=690, y=450)
 
 # Setting the title of the GUI that displpays
 window.title("Smart Door Control")
