@@ -1,4 +1,5 @@
-#File to Encode Faces
+# File to Encode Faces
+# Do not run on the PI
 
 import os
 import tkinter as tk
