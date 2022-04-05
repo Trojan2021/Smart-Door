@@ -46,7 +46,7 @@ pwm.set_PWM_frequency(Deadbolt, 50)
 pwm.set_PWM_frequency(Handle, 50)
 
 # Setting where the servos need to turn to for the deadbolt
-DOpen = 1750
+DOpen = 1675
 DClosed = 2500
 
 def DeadOpen():
@@ -57,7 +57,7 @@ def DeadClosed():
 
 # Setting where the servos need to turn to open the handle
 HOpen = 1200
-HClosed = 1700
+HClosed = 1750
 
 def HandleOpen():
     pwm.set_servo_pulsewidth(Handle, HOpen)
@@ -332,7 +332,7 @@ def Main():
                 dtime = timenow - timestart
 
                 # Prints the amount of time that has passed (uncomment for use)
-                # print(dtime)
+                print(dtime)
 
                 # dtime is the timer so open, stop, close, stop
                 if dtime < 2:
