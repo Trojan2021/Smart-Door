@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#Main v1.1.1 Beta
+#Main v1.3
 import os
 import time
 import tkinter as tk
@@ -431,13 +431,17 @@ def faceToggle():
 
 # Toggle the deadbolt
 def Dead():
+    DeadOn()
     global DeadBolt
     if DeadBolt:
         DeadBolt = False
+        DeadOpen()
         dead['text'] = "Close Deadbolt"
     elif not DeadBolt:
         DeadBolt = True
+        DeadClosed()
         dead['text'] = "Open Deadbolt"
+    DeadOff()
 
 # Close the program
 def Close():
