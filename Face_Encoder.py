@@ -1,5 +1,5 @@
 # File to Encode Faces
-# Do not run on the PI
+# Do not run when the PI is attached to the touchscreen
 
 import os
 import tkinter as tk

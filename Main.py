@@ -67,13 +67,23 @@ def HandleClosed():
 
 # Motor Setup
 # Setting pins for relay
+
+# H-Bridge Relays
 RELAYONE = 17
 RELAYTWO = 27
 
+# Relays to allow for manual operation of door (Turning servos off)
+DEADRELAY = 22
+HANDLERELAY = 23
+
 GPIO.setup(RELAYONE, GPIO.OUT)
 GPIO.setup(RELAYTWO, GPIO.OUT)
+GPIO.setup(DEADRELAY, GPIO.OUT)
+GPIO.setup(HANDLERELAY, GPIO.OUT)
 GPIO.output(RELAYONE, GPIO.HIGH)
 GPIO.output(RELAYTWO, GPIO.HIGH)
+GPIO.output(DEADRELAY, GPIO.HIGH)
+GPIO.output(HANDLERELAY, GPIO.HIGH)
 
 def MotorOpen():
     GPIO.output(RELAYTWO, GPIO.LOW)
@@ -84,6 +94,18 @@ def MotorClose():
 def MotorStop():
     GPIO.output(RELAYTWO, GPIO.HIGH)
     GPIO.output(RELAYONE, GPIO.HIGH)
+
+def DeadOn():
+    GPIO.output(DEADRELAY, GPIO.LOW)
+
+def DeadOff():
+    GPIO.output(DEADRELAY, GPIO.HIGH)
+
+def HandleOn():
+    GPIO.output(HANDLERELAY, GPIO.LOW)
+
+def HandleOff():
+    GPIO.output(HANDLERELAY, GPIO.HIGH)
 
 # LED Setup
 # Pins for LEDs
@@ -314,6 +336,8 @@ def Main():
 
                 # dtime is the timer so open, stop, close, stop
                 if dtime < 2:
+                    DeadOn()
+                    HandleOn()
                     DeadOpen()
                     HandleOpen()
                 if dtime > 2 and dtime < 4.25:
@@ -326,6 +350,7 @@ def Main():
                 if dtime > 10.25:
                     MotorStop()
                     RedOn()
+
                     cool = False
                     Beans = False
 
@@ -334,12 +359,16 @@ def Main():
                 DeadOpen()
                 RedOn()
                 HandleClosed()
+                DeadOff()
+                HandleOff()
 
             # If nothing above is true keep the door handle and deadbolt closed
             else:
                 HandleClosed()
                 DeadClosed()
                 RedOn()
+                DeadOff()
+                HandleOff()
 
                 # Prep the timer to be used again
                 cool = False
