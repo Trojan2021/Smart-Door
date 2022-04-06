@@ -205,7 +205,7 @@ def Main():
 
                 # If the red button on the app is being pressed then continue
                 if (bd[2,0].is_pressed == True):
-                    bd[2,0].when_released = Dead
+                    bd[2,0].when_released = Dead()
                     # Open/Closes the Deadbolt
                     #Dead()
 
@@ -340,9 +340,9 @@ def Main():
                     HandleOn()
                     DeadOpen()
                     HandleOpen()
-                if dtime > 2 and dtime < 4.25:
+                if dtime > 2 and dtime < 3.5:
                     MotorOpen()
-                if dtime > 4.25 and dtime < 6.25:
+                if dtime > 3.5 and dtime < 6.25:
                     HandleClosed()
                     MotorStop()
                 if dtime > 6.25 and dtime < 10.25:
@@ -357,7 +357,7 @@ def Main():
             # If the DeadBolt is Flase then allow for the door to be opened manually with the handle
             elif not DeadBolt:
                 DeadOpen()
-                RedOn()
+                GreenOn()
                 HandleClosed()
                 DeadOff()
                 HandleOff()
@@ -441,6 +441,7 @@ def Dead():
         DeadBolt = True
         DeadClosed()
         dead['text'] = "Open Deadbolt"
+    time.sleep(0.5)
     DeadOff()
 
 # Close the program
