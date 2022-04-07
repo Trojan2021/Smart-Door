@@ -110,7 +110,7 @@ def HandleOff():
 # LED Setup
 # Pins for LEDs
 RED = 5
-GREEN = 6
+GREEN = 3
 GPIO.setup(RED, GPIO.OUT)
 GPIO.output(RED, True)
 GPIO.setup(GREEN, GPIO.OUT)
@@ -118,16 +118,12 @@ GPIO.output(GREEN, False)
 
 
 def GreenOn():
-    GPIO.setup(RED, GPIO.OUT)
     GPIO.output(RED, True)
-    GPIO.setup(GREEN, GPIO.OUT)
     GPIO.output(GREEN, False)
 
 
 def RedOn():
-    GPIO.setup(RED, GPIO.OUT)
     GPIO.output(RED, False)
-    GPIO.setup(GREEN, GPIO.OUT)
     GPIO.output(GREEN, True)
 
 # Main function
