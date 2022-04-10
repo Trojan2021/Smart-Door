@@ -15,26 +15,29 @@ global cameraOn
 cameraOn = False
 
 filename = 0
+
+
 def Beans():
     global filename
     filename = filedialog.askopenfilename(
-        title="Open a JPG",
-        filetypes=(("JPG Files", "*.jpg"), ("All Files", "*.*"))
+        title="Open a JPG", filetypes=(("JPG Files", "*.jpg"), ("All Files", "*.*"))
     )
-    source.delete(0,"end")
-    source.insert(0,filename)
+    source.delete(0, "end")
+    source.insert(0, filename)
+
 
 def CompArray():
     if source.get() == "From Picture":
         image = face_recognition.load_image_file("Media/tempfile.jpg")
         face_encoding = face_recognition.face_encodings(image)[0]
-        np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter = ", ")
+        np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter=", ")
     else:
         image = face_recognition.load_image_file(source.get())
         face_encoding = face_recognition.face_encodings(image)[0]
-        np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter = ", ")
+        np.savetxt(("Encodings/" + name.get()), face_encoding, delimiter=", ")
     if os.path.exists("Media/tempfile.jpg"):
-      os.remove("Media/tempfile.jpg")
+        os.remove("Media/tempfile.jpg")
+
 
 def takePicture():
 
@@ -44,7 +47,7 @@ def takePicture():
     if not cameraOn:
 
         cameraOn = True
-        camera['text'] = "Take Picture"
+        camera["text"] = "Take Picture"
 
         # Video capture
         if platform == "linux":
@@ -58,59 +61,47 @@ def takePicture():
             ret, frame = video_capture.read()
 
             # Displaying the camera
-            blue,green,red = cv2.split(frame)
-            c = cv2.merge((red,green,blue))
+            blue, green, red = cv2.split(frame)
+            c = cv2.merge((red, green, blue))
             co = Image.fromarray(c)
             coo = ImageTk.PhotoImage(image=co)
             picture.configure(image=coo)
             window.update()
-
 
         cv2.imwrite("Media/tempfile.jpg", frame)
 
         video_capture.release()
 
         picture.configure(image=img)
-        camera['text'] = "Open Camera"
+        camera["text"] = "Open Camera"
         window.update()
-
 
     else:
         cameraOn = False
-        source.delete(0,"end")
-        source.insert(0,"From Picture")
-
-
-
-
+        source.delete(0, "end")
+        source.insert(0, "From Picture")
 
 
 window = tk.Tk()
 
 global img
-img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
+img = ImageTk.PhotoImage(Image.open("Media/logo_with_text.jpg"))
 
-picture = tk.Label(
-    image=img
-)
+picture = tk.Label(image=img)
 picture.pack()
 
-camera = tk.Button(
-    text="Open Camera",
-    command=takePicture
-)
+camera = tk.Button(text="Open Camera", command=takePicture)
 camera.pack()
 
-bean = tk.Label(text="Please seclect the picture with a\n face that you would like to encode\n(*.jpg only)")
+bean = tk.Label(
+    text="Please seclect the picture with a\n face that you would like to encode\n(*.jpg only)"
+)
 bean.pack()
 
 source = tk.Entry()
 source.pack()
 
-button = tk.Button(
-    text="Select Source",
-    command=Beans
-)
+button = tk.Button(text="Select Source", command=Beans)
 button.pack()
 
 askforname = tk.Label(
@@ -121,10 +112,7 @@ askforname.pack()
 name = tk.Entry()
 name.pack()
 
-compile = tk.Button(
-    text="Compile Array",
-    command=CompArray
-)
+compile = tk.Button(text="Compile Array", command=CompArray)
 compile.pack()
 
 infostatement = tk.Label(
@@ -132,10 +120,7 @@ infostatement = tk.Label(
 )
 infostatement.pack()
 
-close = tk.Button(
-    text="Close",
-    command=window.destroy
-)
+close = tk.Button(text="Close", command=window.destroy)
 close.pack()
 
 window.title("Face Encoder")

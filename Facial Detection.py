@@ -1,4 +1,4 @@
-#Facial Recogntion w/o Door
+# Facial Recogntion w/o Door
 
 import os
 import tkinter as tk
@@ -16,6 +16,7 @@ letgo = False
 global beenRun
 beenRun = False
 
+
 def Face():
 
     global Bean
@@ -25,7 +26,7 @@ def Face():
 
     if Bean:
 
-        startFace['text'] = "Stop Recognition"
+        startFace["text"] = "Stop Recognition"
 
         Bean = False
 
@@ -39,14 +40,14 @@ def Face():
         known_face_names = []
 
         # Adding people's names and faces to lists
-        dir_path = 'Encodings'
+        dir_path = "Encodings"
         count = 0
         # Iterate directory
         for path in os.listdir(dir_path):
 
             if os.path.isfile(os.path.join(dir_path, path)):
                 count += 1
-                face_encoding = np.loadtxt((dir_path + "/" + path), dtype = float)
+                face_encoding = np.loadtxt((dir_path + "/" + path), dtype=float)
                 known_face_encodings.append(face_encoding)
                 known_face_names.append(path[0:-4])
 
@@ -68,7 +69,9 @@ def Face():
             ret, frame = video_capture.read()
 
             # Scaling for performance
-            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation = cv2.INTER_CUBIC)
+            small_frame = cv2.resize(
+                frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC
+            )
 
             # Converting BRG to RGB
             rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
@@ -79,18 +82,24 @@ def Face():
 
                 # Finds a face
                 face_locations = face_recognition.face_locations(rgb_small_frame)
-                face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+                face_encodings = face_recognition.face_encodings(
+                    rgb_small_frame, face_locations
+                )
 
                 face_names = []
 
                 for face_encoding in face_encodings:
 
                     # Matches a face
-                    matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                    matches = face_recognition.compare_faces(
+                        known_face_encodings, face_encoding
+                    )
                     name = "Unknown"
 
                     # Or instead, use the known face with the smallest distance to the new face
-                    face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                    face_distances = face_recognition.face_distance(
+                        known_face_encodings, face_encoding
+                    )
                     best_match_index = np.argmin(face_distances)
 
                     if matches[best_match_index]:
@@ -99,7 +108,6 @@ def Face():
                     face_names.append(name)
 
             perfCount -= 1
-
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 top *= 4
@@ -111,13 +119,21 @@ def Face():
                 cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 255), 2)
 
                 # Dname
-                cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 255), cv2.FILLED)
+                cv2.rectangle(
+                    frame,
+                    (left, bottom - 35),
+                    (right, bottom),
+                    (255, 0, 255),
+                    cv2.FILLED,
+                )
                 font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                cv2.putText(
+                    frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1
+                )
 
             # Display
-            blue,green,red = cv2.split(frame)
-            c = cv2.merge((red,green,blue))
+            blue, green, red = cv2.split(frame)
+            c = cv2.merge((red, green, blue))
             co = Image.fromarray(c)
             coo = ImageTk.PhotoImage(image=co)
             picture.configure(image=coo)
@@ -125,9 +141,10 @@ def Face():
     else:
         letgo = True
         Bean = True
-        startFace['text'] = "Start Recognition"
+        startFace["text"] = "Start Recognition"
         picture.configure(image=img)
         window.update()
+
 
 def CloseProgram():
     global beenRun
@@ -140,20 +157,18 @@ def CloseProgram():
 
 window = tk.Tk()
 
-window.geometry('1024x600')
+window.geometry("1024x600")
 
 # If on the Pi go fullscreen
 if platform == "linux":
-    window.attributes('-fullscreen', True)
+    window.attributes("-fullscreen", True)
 
 
 global img
-img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
+img = ImageTk.PhotoImage(Image.open("Media/logo_with_text.jpg"))
 
-picture = tk.Label(
-    image=img
-)
-picture.place(x=30, y = 20)
+picture = tk.Label(image=img)
+picture.place(x=30, y=20)
 
 bean = tk.Label(
     text="Facial Recogntion Tester\n(This program only does facial recongiton and does not control the door)"
@@ -161,21 +176,11 @@ bean = tk.Label(
 bean.place(x=150, y=505)
 
 startFace = tk.Button(
-    text="Start Recognition",
-    command=Face,
-    height=10,
-    width=25,
-    font=30
+    text="Start Recognition", command=Face, height=10, width=25, font=30
 )
 startFace.place(x=690, y=20)
 
-close = tk.Button(
-    text="Close",
-    command=CloseProgram,
-    height=10,
-    width=25,
-    font=30
-)
+close = tk.Button(text="Close", command=CloseProgram, height=10, width=25, font=30)
 close.place(x=690, y=320)
 
 window.title("Facial Detection")
