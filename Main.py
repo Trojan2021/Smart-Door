@@ -350,7 +350,7 @@ def Main():
                     cool = False
                     Beans = False
 
-            # If the DeadBolt is Flase then allow for the door to be opened manually with the handle
+            # If the DeadBolt is False then allow for the door to be opened manually with the handle
             elif not DeadBolt:
                 DeadOpen()
                 GreenOn()
