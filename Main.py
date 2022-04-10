@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#Main v1.3
+# Main v1.3
 import os
 import time
 import tkinter as tk
@@ -14,7 +14,7 @@ import RPi.GPIO as GPIO
 from bluedot import BlueDot
 from PIL import Image, ImageTk
 
-#Variable Initialization
+# Variable Initialization
 global overall
 overall = True
 global btOn
@@ -27,10 +27,10 @@ global Deadbolt
 DeadBolt = True
 
 # Start the bluetooth server and get BlueDot ready to be used
-bd = BlueDot(cols = 3, rows = 1)
-bd[0,0].color = "blue"
-bd[1,0].visible = False
-bd[2,0].color = "red"
+bd = BlueDot(cols=3, rows=1)
+bd[0, 0].color = "blue"
+bd[1, 0].visible = False
+bd[2, 0].color = "red"
 
 # Servos Setup
 GPIO.setmode(GPIO.BCM)
@@ -49,21 +49,27 @@ pwm.set_PWM_frequency(Handle, 50)
 DOpen = 1675
 DClosed = 2500
 
+
 def DeadOpen():
     pwm.set_servo_pulsewidth(Deadbolt, DOpen)
 
+
 def DeadClosed():
     pwm.set_servo_pulsewidth(Deadbolt, DClosed)
+
 
 # Setting where the servos need to turn to open the handle
 HOpen = 1200
 HClosed = 1750
 
+
 def HandleOpen():
     pwm.set_servo_pulsewidth(Handle, HOpen)
 
+
 def HandleClosed():
     pwm.set_servo_pulsewidth(Handle, HClosed)
+
 
 # Motor Setup
 # Setting pins for relay
@@ -85,27 +91,35 @@ GPIO.output(RELAYTWO, GPIO.HIGH)
 GPIO.output(DEADRELAY, GPIO.HIGH)
 GPIO.output(HANDLERELAY, GPIO.HIGH)
 
+
 def MotorOpen():
     GPIO.output(RELAYTWO, GPIO.LOW)
 
+
 def MotorClose():
     GPIO.output(RELAYONE, GPIO.LOW)
+
 
 def MotorStop():
     GPIO.output(RELAYTWO, GPIO.HIGH)
     GPIO.output(RELAYONE, GPIO.HIGH)
 
+
 def DeadOn():
     GPIO.output(DEADRELAY, GPIO.LOW)
+
 
 def DeadOff():
     GPIO.output(DEADRELAY, GPIO.HIGH)
 
+
 def HandleOn():
     GPIO.output(HANDLERELAY, GPIO.LOW)
 
+
 def HandleOff():
     GPIO.output(HANDLERELAY, GPIO.HIGH)
+
 
 # LED Setup
 # Pins for LEDs
@@ -126,13 +140,15 @@ def RedOn():
     GPIO.output(RED, False)
     GPIO.output(GREEN, True)
 
+
 # Main function
 # This is in a function because of Tkinter. With Tkinter it is able to be called while it is still running
 # so with that the main is turned into a toggle for itself so it may be called again to turn itself off.
 
+
 def Main():
 
-    #Variable initialization for states and toggles
+    # Variable initialization for states and toggles
     global overall
     global btOn
     global faceOn
@@ -151,7 +167,7 @@ def Main():
         cool = False
 
         # Update GUI
-        main['text'] = "Stop Program"
+        main["text"] = "Stop Program"
 
         # Ensure that the controls/counter continues to run to make sure the door is not stuck in an in between state
         Beans = False
@@ -169,7 +185,7 @@ def Main():
 
         # Adding people's names and faces to lists
         # Telling which folder to search in for encodings
-        dir_path = 'Encodings'
+        dir_path = "Encodings"
 
         # The amount of files and folders in the directory
         for path in os.listdir(dir_path):
@@ -178,7 +194,7 @@ def Main():
             if os.path.isfile(os.path.join(dir_path, path)):
 
                 # Load the file in and save to a variable
-                face_encoding = np.loadtxt((dir_path + "/" + path), dtype = float)
+                face_encoding = np.loadtxt((dir_path + "/" + path), dtype=float)
 
                 # Place the variable into a list
                 known_face_encodings.append(face_encoding)
@@ -200,13 +216,13 @@ def Main():
             if btOn:
 
                 # If the red button on the app is being pressed then continue
-                if (bd[2,0].is_pressed == True):
-                    bd[2,0].when_released = Dead()
+                if bd[2, 0].is_pressed == True:
+                    bd[2, 0].when_released = Dead()
                     # Open/Closes the Deadbolt
-                    #Dead()
+                    # Dead()
 
                 # If the blue button on the app is being pressed then continue
-                if (bd[0,0].is_pressed == True):
+                if bd[0, 0].is_pressed == True:
 
                     # Checking to see if the timer is not already running
                     if cool == False:
@@ -224,7 +240,9 @@ def Main():
                 ret, frame = video_capture.read()
 
                 # Resizing the frame to be a quarter of normal size for performance
-                small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25, interpolation = cv2.INTER_CUBIC)
+                small_frame = cv2.resize(
+                    frame, (0, 0), fx=0.25, fy=0.25, interpolation=cv2.INTER_CUBIC
+                )
 
                 # Converting BGR array to RGB array
                 rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
@@ -239,7 +257,9 @@ def Main():
                     face_locations = face_recognition.face_locations(rgb_small_frame)
 
                     # Makes an encoding of a face if it finds one
-                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+                    face_encodings = face_recognition.face_encodings(
+                        rgb_small_frame, face_locations
+                    )
 
                     # Initialize a list for the names of the faces it found if any
                     face_names = []
@@ -248,11 +268,15 @@ def Main():
                     for face_encoding in face_encodings:
 
                         # Compare encoded faces with the new encodings that were made from the frame
-                        matches = face_recognition.compare_faces(known_face_encodings, face_encoding)
+                        matches = face_recognition.compare_faces(
+                            known_face_encodings, face_encoding
+                        )
                         name = "Unknown"
 
                         # Use a tolerance check on the faces found
-                        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+                        face_distances = face_recognition.face_distance(
+                            known_face_encodings, face_encoding
+                        )
                         best_match_index = np.argmin(face_distances)
 
                         if matches[best_match_index]:
@@ -260,7 +284,7 @@ def Main():
                             # Set the name of the known face to the name that will be used in the frame
                             name = known_face_names[best_match_index]
 
-                            #Door Control
+                            # Door Control
                             if cool == False:
                                 timestart = time.time()
                                 cool = True
@@ -283,18 +307,32 @@ def Main():
                     cv2.rectangle(frame, (left, top), (right, bottom), (255, 0, 255), 2)
 
                     # Drawing the name box
-                    cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (255, 0, 255), cv2.FILLED)
+                    cv2.rectangle(
+                        frame,
+                        (left, bottom - 35),
+                        (right, bottom),
+                        (255, 0, 255),
+                        cv2.FILLED,
+                    )
 
                     # Font used
                     font = cv2.FONT_HERSHEY_DUPLEX
 
                     # Drawing the name in the name box
-                    cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                    cv2.putText(
+                        frame,
+                        name,
+                        (left + 6, bottom - 6),
+                        font,
+                        1.0,
+                        (255, 255, 255),
+                        1,
+                    )
 
                 # Display
                 # Rearrange the array from BGR to RGB
-                blue,green,red = cv2.split(frame)
-                c = cv2.merge((red,green,blue))
+                blue, green, red = cv2.split(frame)
+                c = cv2.merge((red, green, blue))
                 co = Image.fromarray(c)
 
                 # Configure the image for Tkinter
@@ -387,12 +425,12 @@ def Main():
 
         # Toggle everything off and update the GUI
         btOn = False
-        bluetooth['text'] = "Start Bluetooth"
+        bluetooth["text"] = "Start Bluetooth"
         faceOn = False
-        fr['text'] = "Start Facial Recognition"
-        main['text'] = "Start Program"
+        fr["text"] = "Start Facial Recognition"
+        main["text"] = "Start Program"
         DeadBolt = True
-        dead['text'] = "Open Deadbolt"
+        dead["text"] = "Open Deadbolt"
 
         # Update the image displayed to be the logo
         picture.configure(image=img)
@@ -406,11 +444,12 @@ def btToggle():
     global btOn
     if btOn:
         btOn = False
-        bluetooth['text'] = "Start Bluetooth"
+        bluetooth["text"] = "Start Bluetooth"
     elif not btOn:
         btOn = True
-        bluetooth['text'] = "Stop Bluetooth"
+        bluetooth["text"] = "Stop Bluetooth"
     window.update()
+
 
 # Toggle Facial Reecognition
 def faceToggle():
@@ -419,11 +458,12 @@ def faceToggle():
     if faceOn:
         faceOn = False
         letGo = True
-        fr['text'] = "Start Facial Recognition"
+        fr["text"] = "Start Facial Recognition"
     elif not faceOn:
         faceOn = True
-        fr['text'] = "Stop Facial Recognition"
+        fr["text"] = "Stop Facial Recognition"
     window.update()
+
 
 # Toggle the deadbolt
 def Dead():
@@ -432,13 +472,14 @@ def Dead():
     if DeadBolt:
         DeadBolt = False
         DeadOpen()
-        dead['text'] = "Close Deadbolt"
+        dead["text"] = "Close Deadbolt"
     elif not DeadBolt:
         DeadBolt = True
         DeadClosed()
-        dead['text'] = "Open Deadbolt"
+        dead["text"] = "Open Deadbolt"
     time.sleep(0.5)
     DeadOff()
+
 
 # Close the program
 def Close():
@@ -456,72 +497,43 @@ def Close():
 # Define the Tkinter GUI as window
 window = tk.Tk()
 
-#Setting the window size for the pi
-window.geometry('1024x600')
+# Setting the window size for the pi
+window.geometry("1024x600")
 
 # If on the Pi go fullscreen
 if platform == "linux":
-    window.attributes('-fullscreen', True)
+    window.attributes("-fullscreen", True)
 
 # Setting up the logo to be used
 global img
-img = ImageTk.PhotoImage(Image.open('Media/logo_with_text.jpg'))
+img = ImageTk.PhotoImage(Image.open("Media/logo_with_text.jpg"))
 
 # The display of the program
-picture = tk.Label(
-    image=img
-)
-picture.place(x=30, y = 20)
+picture = tk.Label(image=img)
+picture.place(x=30, y=20)
 
 # Display the deadbolt warning
-warning = tk.Label(
-    text="In order for the door to open the deadbolt must be open"
-)
+warning = tk.Label(text="In order for the door to open the deadbolt must be open")
 warning.place(x=130, y=505)
 
 # The button that toggles the program
-main = tk.Button(
-    text="Start Program",
-    command=Main,
-    height=3,
-    font=30
-)
+main = tk.Button(text="Start Program", command=Main, height=3, font=30)
 main.place(x=690, y=50)
 
 # The button that toggles the deadbolt
-dead = tk.Button(
-    text="Open Deadbolt",
-    command=Dead,
-    height=3,
-    font=30
-)
+dead = tk.Button(text="Open Deadbolt", command=Dead, height=3, font=30)
 dead.place(x=690, y=150)
 
 # The button that toggles Bluetooth
-bluetooth = tk.Button(
-    text="Start Bluetooth",
-    command=btToggle,
-    height=3,
-    font=30
-)
+bluetooth = tk.Button(text="Start Bluetooth", command=btToggle, height=3, font=30)
 bluetooth.place(x=690, y=250)
 
 # The button that toggles facial recognition
-fr = tk.Button(
-    text="Start Facial Recognition",
-    command=faceToggle,
-    height=3,
-    font=30
-)
+fr = tk.Button(text="Start Facial Recognition", command=faceToggle, height=3, font=30)
 fr.place(x=690, y=350)
 
 # The button that closes the program
-close = tk.Button(
-    text="Close",
-    command=Close,
-    height=3,
-    font=30
-)
+close = tk.Button(text="Close", command=Close, height=3, font=30)
 close.place(x=690, y=450)
 
 # Setting the title of the GUI that displpays
