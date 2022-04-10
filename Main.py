@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Main v1.3
 import os
 import time
