@@ -41,12 +41,11 @@ def Face():
 
         # Adding people's names and faces to lists
         dir_path = "Encodings"
-        count = 0
+
         # Iterate directory
         for path in os.listdir(dir_path):
 
             if os.path.isfile(os.path.join(dir_path, path)):
-                count += 1
                 face_encoding = np.loadtxt((dir_path + "/" + path), dtype=float)
                 known_face_encodings.append(face_encoding)
                 known_face_names.append(path[0:-4])
