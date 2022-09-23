@@ -18,3 +18,5 @@ This project was started at HackOHI/O 2021 and continued at MakeOHI/O 2022
 If you need to contact me about this project feel free to leave a message in the discussion channel.
 
 Feel free to join the discord channel for casual talk on the project or getting in contact with a developer: <https://discord.gg/AnNgcTGA5N>
+
+(WIP) We have started a website to move the project to a permanent location : <https://www.smartentrysolutions.com/>
