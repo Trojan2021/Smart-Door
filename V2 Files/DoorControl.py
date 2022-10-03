@@ -3,6 +3,7 @@ class Door:
     def __init__(self, doorName):
         self.name = doorName
         self.state = True
+        self.face = False
 
     def toggle(self):
         self.state = not self.state
@@ -12,3 +13,6 @@ class Door:
 
     def close(self):
         self.state = True
+
+    def toggleface(self):
+        self.face = not self.face
