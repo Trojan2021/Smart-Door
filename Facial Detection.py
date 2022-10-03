@@ -9,6 +9,10 @@ import numpy as np
 from PIL import Image, ImageTk
 from sys import platform
 
+import DoorControl
+
+door = DoorControl.Door("Beans")
+
 global Bean
 Bean = True
 global letgo
