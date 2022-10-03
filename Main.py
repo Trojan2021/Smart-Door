@@ -413,7 +413,7 @@ def Main():
 
             # This is to make the try work
             except:
-                cool_beans = False
+                pass
 
     # If Main has been called before go here
     else:

@@ -1,5 +1,10 @@
 # Smart-Door
 
+## __All code is under a full rewrite__
+The code is really messy and needs a rewrite. I am working on getting it into a better state to allow it to scale to more doors all at once and be able to control more about the doors. I am not sure about the timeline but work on it has started - Sawyer R. 10/22
+
+## __**__
+
 A smart door system that allows for multiple modes.
 This program has only been desgined to work with a Raspberry Pi currently. Support for other machines will hopefully come in the future.
 
