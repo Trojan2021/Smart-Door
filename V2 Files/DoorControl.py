@@ -12,3 +12,19 @@ class Door:
 
     def close(self):
         self.state = True
+
+
+class DeadBolt:
+    def __init__(self) -> None:
+        self.state = False
+
+    def open(self):
+        self.state = True
+
+    def close(self):
+        self.state = False
+
+
+class FaceRecogntion:
+    def __init__(self) -> None:
+        self.state = False
