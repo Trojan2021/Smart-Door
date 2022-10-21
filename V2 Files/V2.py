@@ -4,7 +4,13 @@ import DoorControl
 import tkinter as tk
 from bluedot import BlueDot
 from PIL import Image, ImageTk
+import cv2
+import face_recognition
+import numpy as np
 import Jetson.GPIO as GPIO
+
+# AFAICS only pins 32 and 33 are PWM capable on the Jetson Nano.
+# And you need to run /opt/nvidia/jetson-io/jetson-io.py to enable PWM on those pins.
 
 bean = DoorControl.Door("Beans")
 
@@ -15,7 +21,6 @@ bd = BlueDot(cols=3, rows=1)
 bd[0, 0].color = "blue"
 bd[1, 0].visible = False
 bd[2, 0].color = "red"
-
 
 
 def doorTimer():
@@ -36,6 +41,30 @@ def doorTimer():
                 bean.close()
             if dtime > 10.25:
                 bean.doorState = not bean.doorState
+
+def logic():
+    while True:
+        # Bluetooth
+        # Checking to see if bluetooth is toggled on
+        if bean.BTState:
+
+            # If the red button on the app is being pressed then continue
+            if bd[2, 0].is_pressed == True:
+                bd[2, 0].when_released = Dead()
+                # Open/Closes the Deadbolt
+                # Dead()
+
+            # If the blue button on the app is being pressed then continue
+            if bd[0, 0].is_pressed == True:
+
+                # Checking to see if the timer is not already running
+                if cool == False:
+
+                    # Setting a variable to the time the button was pressed
+                    timestart = time.time()
+
+                    # Ensuring the timer can't be run again until it is finished
+                    cool = True
 
 
 t = threading.Thread(target=doorTimer)

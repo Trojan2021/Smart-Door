@@ -4,13 +4,19 @@ import Jetson.GPIO as GPIO
 
 class Door:
     # For doorstate, True means that the door is closed and False means that it is open
-    def __init__(self, doorName):
+    def __init__(self, doorName, openingServo, handle, deadbolt, red, green):
         self.name = doorName
         self.doorState = True
         self.face = False
         self.deadState = False
         self.faceState = False
         self.handState = False
+        self.openerport = openingServo
+        self.handPort = handle
+        self.deadort = deadbolt
+        self.red = red
+        self.green = green
+        self.BTState = False
 
     # Door Controls
     def doorToggle(self):
